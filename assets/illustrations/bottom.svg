@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Illustration/Bottom" opacity="0.5">
+<path id="fill" d="M10.6875 3.375H25.3125L27.5625 32.625H20.5312L18 14.0625L15.4688 32.625H8.4375L10.6875 3.375Z" fill="#C8B48E" stroke-width="0.84375" stroke-linejoin="round" stroke="black" stroke-opacity="0.22"/>
+<path id="detail" d="M10.4625 6.75H25.5375" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+<path id="detail_2" d="M18 6.75V12.375" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+<path id="detail_3" d="M11.5312 6.75C12.0938 9.28125 13.5 10.4062 15.1875 10.4062" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+<path id="detail_4" d="M24.4688 6.75C23.9062 9.28125 22.5 10.4062 20.8125 10.4062" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+</g>
+</svg>
