@@ -1,5 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const path = require('node:path');
+const { enterText } = require('./support/text.cjs');
 
 async function openApp(page) {
   await page.goto('/');
@@ -7,14 +8,6 @@ async function openApp(page) {
   await page.locator('flutter-view').waitFor({state:'attached'});
   if (await placeholder.count()) await placeholder.evaluate(element => element.click());
   await expect(page.getByRole('button', {name:'Sign in', exact:true})).toBeVisible();
-}
-async function enterText(page, field, value) {
-  await field.click();
-  await page.keyboard.press('ControlOrMeta+A');
-  await page.keyboard.press('Backspace');
-  await page.keyboard.type(value, {delay: 5});
-  await expect(field).toHaveValue(value);
-  await page.keyboard.press('Tab');
 }
 test('real Firebase emulator auth, wardrobe persistence, photo, theme and sign-out', async ({page}) => {
   const errors = [];

@@ -1,18 +1,10 @@
 const { test, expect } = require('@playwright/test');
+const { enterText } = require('./support/text.cjs');
 
 async function enableSemantics(page) {
   await page.locator('flutter-view').waitFor({ state: 'attached' });
   const placeholder = page.locator('flt-semantics-placeholder');
   if (await placeholder.count()) await placeholder.evaluate(element => element.click());
-}
-
-async function enterText(page, field, value) {
-  await field.click();
-  await page.keyboard.press('ControlOrMeta+A');
-  await page.keyboard.press('Backspace');
-  await page.keyboard.type(value, { delay: 5 });
-  await expect(field).toHaveValue(value);
-  await page.keyboard.press('Tab');
 }
 
 async function addItem(page, item) {
