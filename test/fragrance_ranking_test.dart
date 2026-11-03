@@ -248,21 +248,24 @@ void main() {
         expect(value.reason, isNot(contains('\n')));
         expect(value.reason, isNot(contains('Citrus')));
       }
+      expect(ranked.first.reason, endsWith('fits both preferences.'));
+      expect(ranked.last.reason, endsWith('outside both preferences.'));
+      expect(ranked.every((value) => value.reason.length < 100), isTrue);
       expect(
-        ranked.first.reason,
-        contains('Cool (below 20°C) fits the temperature'),
+        rank(
+          [fragrance('temperature', TemperatureBand.cool, HumidityBand.dry)],
+          19.99,
+          85,
+        ).single.reason,
+        endsWith('fits temperature; humidity differs.'),
       );
       expect(
-        ranked.first.reason,
-        contains('Humid (above 70%) fits the humidity'),
-      );
-      expect(
-        ranked.last.reason,
-        contains('Warm (above 27°C) is outside the temperature'),
-      );
-      expect(
-        ranked.last.reason,
-        contains('Dry (below 40%) is outside the humidity'),
+        rank(
+          [fragrance('humidity', TemperatureBand.warm, HumidityBand.humid)],
+          19.99,
+          85,
+        ).single.reason,
+        endsWith('fits humidity; temperature differs.'),
       );
     },
   );

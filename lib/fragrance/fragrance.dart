@@ -199,19 +199,19 @@ List<RankedFragrance> rankFragrances({
         (humidityFits ? 0 : 1) +
         fragrance.temperatureBand._distance(temperatureC) / 7 +
         fragrance.humidityBand._distance(relativeHumidity) / 30;
-    final temperatureReason =
-        '${fragrance.temperatureBand.label} (${fragrance.temperatureBand.rangeLabel}) '
-        '${temperatureFits ? 'fits the temperature' : 'is outside the temperature'}';
-    final humidityReason =
-        '${fragrance.humidityBand.label} (${fragrance.humidityBand.rangeLabel}) '
-        '${humidityFits ? 'fits the humidity' : 'is outside the humidity'}';
+    final fitReason = switch ((temperatureFits, humidityFits)) {
+      (true, true) => 'fits both preferences.',
+      (true, false) => 'fits temperature; humidity differs.',
+      (false, true) => 'fits humidity; temperature differs.',
+      (false, false) => 'outside both preferences.',
+    };
     ranked.add(
       RankedFragrance(
         fragrance: fragrance,
         score: 1 / (1 + penalty),
         reason:
             '${_weatherNumber(temperatureC)}°C and ${_weatherNumber(relativeHumidity)}% humidity: '
-            '$temperatureReason; $humidityReason.',
+            '$fitReason',
       ),
     );
   }

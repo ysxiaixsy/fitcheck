@@ -13,11 +13,13 @@ class TodayScreen extends StatelessWidget {
     this.now,
     this.readyCategories = const {},
     this.occasionName,
+    this.fragrance,
   });
   final VoidCallback onAddClothes, onAddFragrance;
   final DateTime? now;
   final Set<ClothingCategory> readyCategories;
   final String? occasionName;
+  final Widget? fragrance;
   @override
   Widget build(BuildContext context) {
     final colors = FitCheckColors.of(context),
@@ -111,6 +113,10 @@ class TodayScreen extends StatelessWidget {
               ],
             ),
           ),
+          if (fragrance != null) ...[
+            const SizedBox(height: AppSpace.md),
+            fragrance!,
+          ],
         ],
       ),
     );
