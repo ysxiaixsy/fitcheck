@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/fake_auth_gateway.dart';
+import 'support/memory_wardrobe_repository.dart';
 
 void main() {
   late FakeAuthGateway auth;
@@ -26,7 +27,13 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     if (signedIn) await auth.signIn('test@example.com', 'password1');
-    await tester.pumpWidget(FitCheckApp(auth: auth, preferences: preferences));
+    await tester.pumpWidget(
+      FitCheckApp(
+        auth: auth,
+        preferences: preferences,
+        repositoryFactory: (_) => MemoryWardrobeRepository(),
+      ),
+    );
     await tester.pumpAndSettle();
   }
 
@@ -130,4 +137,22 @@ void main() {
       expect(tester.takeException(), isNull);
     }
   });
+
+  testWidgets(
+    'sign-out closes an open item form before another account can use it',
+    (tester) async {
+      await pumpApp(tester, signedIn: true);
+      await tester.tap(find.text('Add clothes'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('save-item')), findsOneWidget);
+      await auth.signOut();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('save-item')), findsNothing);
+      expect(find.byKey(const Key('auth-submit')), findsOneWidget);
+      await auth.signIn('other@example.com', 'password2');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('save-item')), findsNothing);
+      expect(find.byKey(const Key('nav-today')), findsOneWidget);
+    },
+  );
 }

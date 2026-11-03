@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,6 +45,7 @@ class _FitCheckBootstrapState extends State<FitCheckBootstrap> {
                 messagingSenderId: '123456789',
                 projectId: 'demo-fitcheck',
                 authDomain: 'demo-fitcheck.firebaseapp.com',
+                storageBucket: 'demo-fitcheck.appspot.com',
               )
             : DefaultFirebaseOptions.currentPlatform,
       );
@@ -56,6 +59,8 @@ class _FitCheckBootstrapState extends State<FitCheckBootstrap> {
           ? '10.0.2.2'
           : '127.0.0.1';
       await auth.useAuthEmulator(host, 9099);
+      FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
+      await FirebaseStorage.instance.useStorageEmulator(host, 9199);
     }
     if (kIsWeb) await auth.setPersistence(Persistence.LOCAL);
     return (
@@ -70,7 +75,15 @@ class _FitCheckBootstrapState extends State<FitCheckBootstrap> {
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         final (auth, preferences) = snapshot.data!;
-        return FitCheckApp(auth: auth, preferences: preferences);
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom:
+                kIsWeb && const bool.fromEnvironment('USE_FIREBASE_EMULATORS')
+                ? AppSize.touch
+                : 0,
+          ),
+          child: FitCheckApp(auth: auth, preferences: preferences),
+        );
       }
       return MaterialApp(
         title: 'FitCheck',

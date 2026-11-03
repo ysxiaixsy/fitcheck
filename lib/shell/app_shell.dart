@@ -7,6 +7,10 @@ import '../widgets/common.dart';
 import '../today/today_screen.dart';
 import '../wardrobe/wardrobe_screen.dart';
 import '../planner/planner_screen.dart';
+import '../wardrobe/add_item_screen.dart';
+import '../wardrobe/firestore_wardrobe_repository.dart';
+import '../wardrobe/wardrobe_repository.dart';
+import '../wardrobe/wardrobe_store.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({
@@ -14,15 +18,42 @@ class AppShell extends StatefulWidget {
     required this.user,
     required this.auth,
     required this.preferences,
+    this.repositoryFactory,
   });
   final AuthUser user;
   final AuthGateway auth;
   final AppPreferences preferences;
+  final WardrobeRepository Function(String userId)? repositoryFactory;
   @override
   State<AppShell> createState() => _AppShellState();
 }
 
 class _AppShellState extends State<AppShell> {
+  late final WardrobeStore _store;
+  @override
+  void initState() {
+    super.initState();
+    _store = WardrobeStore(
+      widget.repositoryFactory?.call(widget.user.id) ??
+          FirestoreWardrobeRepository(widget.user.id),
+    );
+    _store.addListener(_refresh);
+  }
+
+  void _refresh() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _store.removeListener(_refresh);
+    _store.dispose();
+    super.dispose();
+  }
+
+  Future<void> _addItem() => Navigator.of(
+    context,
+  ).push<void>(MaterialPageRoute(builder: (_) => AddItemScreen(store: _store)));
   int _index = 0;
   String _filter = 'All';
   void _wardrobe({bool scents = false}) => setState(() {
@@ -45,11 +76,13 @@ class _AppShellState extends State<AppShell> {
     final text = Theme.of(context).textTheme;
     final pages = [
       TodayScreen(
-        onAddClothes: () => _wardrobe(),
+        onAddClothes: _addItem,
         onAddFragrance: () => _wardrobe(scents: true),
       ),
       WardrobeScreen(
         filter: _filter,
+        store: _store,
+        onAdd: _addItem,
         onFilterChanged: (value) => setState(() => _filter = value),
       ),
       const PlannerScreen(),
@@ -215,7 +248,6 @@ class _AccountSheetState extends State<_AccountSheet> {
     });
     try {
       await widget.auth.signOut();
-      if (mounted) Navigator.of(context).pop();
     } on AuthFailure catch (error) {
       if (mounted) setState(() => _error = error.message);
     } finally {
