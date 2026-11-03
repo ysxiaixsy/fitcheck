@@ -22,33 +22,37 @@ class FragranceImage extends StatelessWidget {
   });
   final Fragrance fragrance;
   final double size;
+  // Decorative: the fragrance name is always shown beside the image, and an
+  // image flag here would otherwise merge into the surrounding card.
   @override
-  Widget build(BuildContext context) => Container(
-    width: size,
-    height: size,
-    decoration: BoxDecoration(
-      color: FitCheckColors.of(context).subtle,
-      borderRadius: BorderRadius.circular(AppRadius.md),
-    ),
-    clipBehavior: Clip.antiAlias,
-    alignment: Alignment.center,
-    child: fragrance.photoUrl == null
-        ? const AppSvg(
-            'scent',
-            illustration: true,
-            size: FragranceMetrics.illustration,
-          )
-        : Image.network(
-            fragrance.photoUrl!,
-            fit: BoxFit.cover,
-            width: size,
-            height: size,
-            errorBuilder: (_, _, _) => const AppSvg(
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: FitCheckColors.of(context).subtle,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      clipBehavior: Clip.antiAlias,
+      alignment: Alignment.center,
+      child: fragrance.photoUrl == null
+          ? const AppSvg(
               'scent',
               illustration: true,
               size: FragranceMetrics.illustration,
+            )
+          : Image.network(
+              fragrance.photoUrl!,
+              fit: BoxFit.cover,
+              width: size,
+              height: size,
+              errorBuilder: (_, _, _) => const AppSvg(
+                'scent',
+                illustration: true,
+                size: FragranceMetrics.illustration,
+              ),
             ),
-          ),
+    ),
   );
 }
 
