@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/fake_auth_gateway.dart';
 import 'support/memory_wardrobe_repository.dart';
+import 'support/memory_outfit_repository.dart';
 
 void main() {
   late FakeAuthGateway auth;
@@ -32,6 +33,7 @@ void main() {
         auth: auth,
         preferences: preferences,
         repositoryFactory: (_) => MemoryWardrobeRepository(),
+        outfitRepositoryFactory: (_) => MemoryOutfitRepository(),
       ),
     );
     await tester.pumpAndSettle();

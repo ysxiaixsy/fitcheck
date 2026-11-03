@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../theme/fitcheck_theme.dart';
+import '../wardrobe/wardrobe_models.dart';
 import '../widgets/common.dart';
+import 'week_strip.dart';
 
 class TodayScreen extends StatelessWidget {
   const TodayScreen({
@@ -9,18 +11,17 @@ class TodayScreen extends StatelessWidget {
     required this.onAddClothes,
     required this.onAddFragrance,
     this.now,
+    this.readyCategories = const {},
+    this.occasionName,
   });
   final VoidCallback onAddClothes, onAddFragrance;
   final DateTime? now;
+  final Set<ClothingCategory> readyCategories;
+  final String? occasionName;
   @override
   Widget build(BuildContext context) {
-    final c = FitCheckColors.of(context), text = Theme.of(context).textTheme;
-    final today = dateOnly(now ?? DateTime.now());
-    final monday = DateTime(
-      today.year,
-      today.month,
-      today.day - today.weekday + 1,
-    );
+    final colors = FitCheckColors.of(context),
+        text = Theme.of(context).textTheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
         AppSpace.lg,
@@ -31,48 +32,7 @@ class TodayScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: List.generate(7, (i) {
-              final date = DateTime(monday.year, monday.month, monday.day + i);
-              final selected = date == today;
-              return Expanded(
-                child: Semantics(
-                  label: readableDate(date),
-                  selected: selected,
-                  child: ExcludeSemantics(
-                    child: Column(
-                      children: [
-                        Text(
-                          weekdayNames[i],
-                          style: text.labelSmall?.copyWith(
-                            color: selected ? c.accent : c.secondary,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpace.xs),
-                        Container(
-                          width: AppSize.dateCircle,
-                          height: AppSize.dateCircle,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: selected ? c.accent : null,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            '${date.day}',
-                            style:
-                                (selected ? text.labelLarge : text.bodyMedium)
-                                    ?.copyWith(
-                                      color: selected ? c.onAccent : c.primary,
-                                    ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
+          TodayWeekStrip(date: now ?? DateTime.now()),
           const SizedBox(height: AppSpace.xxl),
           SurfaceCard(
             child: Column(
@@ -81,15 +41,13 @@ class TodayScreen extends StatelessWidget {
                 Text('Let’s add your clothes', style: text.titleLarge),
                 const SizedBox(height: AppSpace.xs),
                 Text(
-                  'Add a top, a bottom, and shoes. Then FitCheck can pick your outfit every morning.',
-                  style: text.bodyMedium?.copyWith(color: c.secondary),
+                  occasionName == null
+                      ? 'Add a top, a bottom, and shoes. Then FitCheck can pick your outfit every morning.'
+                      : 'Add or wash the missing pieces for $occasionName. Only clean or worn clothes can be picked.',
+                  style: text.bodyMedium?.copyWith(color: colors.secondary),
                 ),
                 const SizedBox(height: AppSpace.lg),
-                for (final entry in [
-                  ('top', 'A top'),
-                  ('bottom', 'A bottom'),
-                  ('shoes', 'Shoes'),
-                ]) ...[
+                for (final category in ClothingCategory.values) ...[
                   Row(
                     children: [
                       Container(
@@ -97,36 +55,50 @@ class TodayScreen extends StatelessWidget {
                         height: AppSize.touch,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: c.subtle,
+                          color: colors.subtle,
                           borderRadius: BorderRadius.circular(AppRadius.md),
                         ),
-                        child: AppSvg(entry.$1, illustration: true),
+                        child: AppSvg(category.name, illustration: true),
                       ),
                       const SizedBox(width: AppSpace.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(entry.$2, style: text.labelLarge),
                             Text(
-                              'Not added yet',
+                              category == ClothingCategory.top
+                                  ? 'A top'
+                                  : category == ClothingCategory.bottom
+                                  ? 'A bottom'
+                                  : 'Shoes',
+                              style: text.labelLarge,
+                            ),
+                            Text(
+                              readyCategories.contains(category)
+                                  ? 'Ready'
+                                  : occasionName == null
+                                  ? 'Not added yet'
+                                  : 'Needs a clean piece',
                               style: text.bodySmall?.copyWith(
-                                color: c.secondary,
+                                color: colors.secondary,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      if (readyCategories.contains(category))
+                        Icon(Icons.check_circle_outline, color: colors.success),
                     ],
                   ),
-                  if (entry.$1 != 'shoes') const SizedBox(height: AppSpace.sm),
+                  if (category != ClothingCategory.shoes)
+                    const SizedBox(height: AppSpace.sm),
                 ],
                 const SizedBox(height: AppSpace.lg),
                 FilledButton.icon(
                   onPressed: onAddClothes,
                   icon: AppSvg(
                     'plus',
-                    color: c.onAccent,
+                    color: colors.onAccent,
                     size: AppSize.iconMedium,
                   ),
                   label: const Text('Add clothes'),

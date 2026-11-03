@@ -31,5 +31,26 @@ service cloud.firestore {
         && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40
         && request.resource.data.isDefault == false;
     }
+    function validOutfit(day) {
+      let d = request.resource.data;
+      return d.keys().hasAll(['date','topId','bottomId','shoesId','occasionId','reason','worn'])
+        && d.keys().hasOnly(['date','topId','bottomId','shoesId','occasionId','reason','worn'])
+        && d.date is string && d.date == day && day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && validId(d.topId) && validId(d.bottomId) && validId(d.shoesId) && validId(d.occasionId)
+        && d.topId != d.bottomId && d.topId != d.shoesId && d.bottomId != d.shoesId
+        && d.reason is string && d.reason.size() > 0 && d.reason.size() <= 500
+        && !d.reason.matches('.*[\\r\\n].*') && d.worn is bool;
+    }
+    function validId(id) {
+      return id is string && id.size() > 0 && id.size() <= 1500
+        && id != '.' && id != '..' && !id.matches('.*/.*');
+    }
+    match /users/{uid}/outfits/{day} {
+      allow read: if owner(uid);
+      allow create: if owner(uid) && validOutfit(day);
+      allow update: if owner(uid) && validOutfit(day)
+        && (resource.data.worn == false || request.resource.data == resource.data);
+      allow delete: if owner(uid) && resource.data.worn == false;
+    }
   }
 }

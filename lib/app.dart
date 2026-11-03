@@ -8,6 +8,7 @@ import 'settings/app_preferences.dart';
 import 'shell/app_shell.dart';
 import 'theme/fitcheck_theme.dart';
 import 'wardrobe/wardrobe_repository.dart';
+import 'outfits/outfit_repository.dart';
 
 class FitCheckApp extends StatefulWidget {
   const FitCheckApp({
@@ -15,10 +16,12 @@ class FitCheckApp extends StatefulWidget {
     required this.auth,
     required this.preferences,
     this.repositoryFactory,
+    this.outfitRepositoryFactory,
   });
   final AuthGateway auth;
   final AppPreferences preferences;
   final WardrobeRepository Function(String userId)? repositoryFactory;
+  final OutfitRepository Function(String userId)? outfitRepositoryFactory;
   @override
   State<FitCheckApp> createState() => _FitCheckAppState();
 }
@@ -122,6 +125,7 @@ class _FitCheckAppState extends State<FitCheckApp> {
               auth: widget.auth,
               preferences: widget.preferences,
               repositoryFactory: widget.repositoryFactory,
+              outfitRepositoryFactory: widget.outfitRepositoryFactory,
             ),
     ),
   );

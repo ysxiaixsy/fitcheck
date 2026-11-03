@@ -4,7 +4,9 @@ import '../auth/auth_gateway.dart';
 import '../settings/app_preferences.dart';
 import '../theme/fitcheck_theme.dart';
 import '../widgets/common.dart';
-import '../today/today_screen.dart';
+import '../today/today_outfit_screen.dart';
+import '../outfits/outfit_repository.dart';
+import '../outfits/firestore_outfit_repository.dart';
 import '../wardrobe/wardrobe_screen.dart';
 import '../planner/planner_screen.dart';
 import '../wardrobe/add_item_screen.dart';
@@ -19,17 +21,20 @@ class AppShell extends StatefulWidget {
     required this.auth,
     required this.preferences,
     this.repositoryFactory,
+    this.outfitRepositoryFactory,
   });
   final AuthUser user;
   final AuthGateway auth;
   final AppPreferences preferences;
   final WardrobeRepository Function(String userId)? repositoryFactory;
+  final OutfitRepository Function(String userId)? outfitRepositoryFactory;
   @override
   State<AppShell> createState() => _AppShellState();
 }
 
 class _AppShellState extends State<AppShell> {
   late final WardrobeStore _store;
+  late final OutfitRepository _outfits;
   @override
   void initState() {
     super.initState();
@@ -38,6 +43,9 @@ class _AppShellState extends State<AppShell> {
           FirestoreWardrobeRepository(widget.user.id),
     );
     _store.addListener(_refresh);
+    _outfits =
+        widget.outfitRepositoryFactory?.call(widget.user.id) ??
+        FirestoreOutfitRepository(widget.user.id);
   }
 
   void _refresh() {
@@ -75,7 +83,9 @@ class _AppShellState extends State<AppShell> {
     final c = FitCheckColors.of(context);
     final text = Theme.of(context).textTheme;
     final pages = [
-      TodayScreen(
+      TodayOutfitScreen(
+        wardrobe: _store,
+        outfits: _outfits,
         onAddClothes: _addItem,
         onAddFragrance: () => _wardrobe(scents: true),
       ),
