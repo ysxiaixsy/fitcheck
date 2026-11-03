@@ -1,3 +1,7 @@
+## Project context
+
+For feature or screen work, read `FitCheck-Build-Handoff.md`. For current progress and remaining verification, see `docs/build-status.md`.
+
 ## Agent skills
 
 ### Issue tracker
