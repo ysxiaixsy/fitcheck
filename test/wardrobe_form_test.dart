@@ -83,6 +83,27 @@ void main() {
     expect(repository.saves, 0);
   });
 
+  testWidgets('required errors clear as each field is corrected', (
+    tester,
+  ) async {
+    final repository = _ControlledRepository();
+    await openForm(tester, repository);
+    await tester.tap(find.byKey(const Key('save-item')));
+    await tester.pumpAndSettle();
+    expect(find.text('Enter an item name.'), findsOneWidget);
+    expect(find.text('Enter a color name.'), findsOneWidget);
+
+    await tester.enterText(find.byKey(const Key('item-name')), 'Navy polo');
+    await tester.pumpAndSettle();
+    expect(find.text('Enter an item name.'), findsNothing);
+    expect(find.text('Enter a color name.'), findsOneWidget);
+
+    await tester.enterText(find.byKey(const Key('item-color')), 'Navy blue');
+    await tester.pumpAndSettle();
+    expect(find.text('Enter a color name.'), findsNothing);
+    expect(repository.saves, 0);
+  });
+
   testWidgets('failed save preserves entered details for retry', (
     tester,
   ) async {

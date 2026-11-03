@@ -247,6 +247,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         key: const Key('item-name'),
                         controller: _name,
                         enabled: !_saving,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         maxLength: 120,
                         textCapitalization: TextCapitalization.sentences,
                         decoration: const InputDecoration(
@@ -265,6 +266,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         key: const Key('item-color'),
                         controller: _color,
                         enabled: !_saving,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         maxLength: 60,
                         decoration: const InputDecoration(
                           labelText: 'Color',
