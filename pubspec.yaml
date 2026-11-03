@@ -1,0 +1,38 @@
+name: fitcheck
+description: Outfits and fragrances from your own wardrobe, matched to your day.
+publish_to: none
+version: 0.1.0+1
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^5.1.0
+  firebase_auth: ^7.0.1
+  flutter_svg: ^2.3.2
+  shared_preferences: ^2.5.6
+  cloud_firestore: ^7.1.0
+  firebase_storage: ^14.0.1
+  image_picker: ^1.2.4
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/illustrations/
+  fonts:
+    - family: Plus Jakarta Sans
+      fonts:
+        - asset: assets/fonts/PlusJakartaSans.ttf
+          weight: 400
+        - asset: assets/fonts/PlusJakartaSans.ttf
+          weight: 600
+        - asset: assets/fonts/PlusJakartaSans.ttf
+          weight: 700
