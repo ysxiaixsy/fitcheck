@@ -1,0 +1,17 @@
+{
+  "name": "fitcheck-verification",
+  "private": true,
+  "scripts": {
+    "test:web": "playwright test",
+    "test:rules": "node --test test-rules/*.test.cjs"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "@playwright/test": "1.64.1",
+    "firebase": "13.1.0",
+    "firebase-tools": "15.34.2"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.14.7"
+  }
+}
