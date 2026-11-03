@@ -1,0 +1,8 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Illustration/Scent">
+<path id="fill" d="M11 15.8125H33C35.2687 15.8125 37.125 17.6688 37.125 19.9375V36.4375C37.125 38.7062 35.2687 40.5625 33 40.5625H11C8.73125 40.5625 6.875 38.7062 6.875 36.4375V19.9375C6.875 17.6688 8.73125 15.8125 11 15.8125Z" fill="#E8C77A" stroke-width="1.03125" stroke-linejoin="round" stroke="black" stroke-opacity="0.22"/>
+<path id="detail" d="M18.5625 10.3125H25.4375V15.8125H18.5625V10.3125Z" fill="black" fill-opacity="0.35"/>
+<path id="detail_2" d="M17.875 3.4375H26.125C26.8813 3.4375 27.5 4.05625 27.5 4.8125V10.3125H16.5V4.8125C16.5 4.05625 17.1187 3.4375 17.875 3.4375Z" fill="black" fill-opacity="0.78"/>
+<path id="detail_3" d="M13.75 24.0625H30.25V32.3125H13.75V24.0625Z" fill="white" fill-opacity="0.75"/>
+</g>
+</svg>
