@@ -13,6 +13,14 @@ import '../wardrobe/add_item_screen.dart';
 import '../wardrobe/firestore_wardrobe_repository.dart';
 import '../wardrobe/wardrobe_repository.dart';
 import '../wardrobe/wardrobe_store.dart';
+import '../fragrance/fragrance_repository.dart';
+import '../fragrance/firestore_fragrance_repository.dart';
+import '../fragrance/fragrance_store.dart';
+import '../fragrance/fragrance_form.dart';
+import '../fragrance/today_fragrance.dart';
+import '../weather/weather_service.dart';
+import '../weather/weather_store.dart';
+import '../weather/location_sheet.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({
@@ -22,12 +30,16 @@ class AppShell extends StatefulWidget {
     required this.preferences,
     this.repositoryFactory,
     this.outfitRepositoryFactory,
+    this.fragranceRepositoryFactory,
+    this.weatherServiceFactory,
   });
   final AuthUser user;
   final AuthGateway auth;
   final AppPreferences preferences;
   final WardrobeRepository Function(String userId)? repositoryFactory;
   final OutfitRepository Function(String userId)? outfitRepositoryFactory;
+  final FragranceRepository Function(String userId)? fragranceRepositoryFactory;
+  final WeatherService Function()? weatherServiceFactory;
   @override
   State<AppShell> createState() => _AppShellState();
 }
@@ -35,6 +47,9 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   late final WardrobeStore _store;
   late final OutfitRepository _outfits;
+  late final FragranceStore _fragrances;
+  late final WeatherStore _weather;
+  late final WeatherService _weatherService;
   @override
   void initState() {
     super.initState();
@@ -46,6 +61,13 @@ class _AppShellState extends State<AppShell> {
     _outfits =
         widget.outfitRepositoryFactory?.call(widget.user.id) ??
         FirestoreOutfitRepository(widget.user.id);
+    final fragrances =
+        widget.fragranceRepositoryFactory?.call(widget.user.id) ??
+        FirestoreFragranceRepository(widget.user.id);
+    _fragrances = FragranceStore(fragrances)..addListener(_refresh);
+    _weatherService = widget.weatherServiceFactory?.call() ?? WeatherService();
+    _weather = WeatherStore(service: _weatherService, repository: fragrances)
+      ..addListener(_refresh);
   }
 
   void _refresh() {
@@ -56,18 +78,24 @@ class _AppShellState extends State<AppShell> {
   void dispose() {
     _store.removeListener(_refresh);
     _store.dispose();
+    _fragrances.removeListener(_refresh);
+    _fragrances.dispose();
+    _weather.removeListener(_refresh);
+    _weather.dispose();
+    _weatherService.close();
     super.dispose();
   }
 
   Future<void> _addItem() => Navigator.of(
     context,
   ).push<void>(MaterialPageRoute(builder: (_) => AddItemScreen(store: _store)));
+  Future<void> _addFragrance() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => FragranceFormScreen(repository: _fragrances.repository),
+    ),
+  );
   int _index = 0;
   String _filter = 'All';
-  void _wardrobe({bool scents = false}) => setState(() {
-    _filter = scents ? 'Scents' : 'All';
-    _index = 1;
-  });
   Future<void> _account() => showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -76,6 +104,7 @@ class _AppShellState extends State<AppShell> {
       user: widget.user,
       auth: widget.auth,
       preferences: widget.preferences,
+      weather: _weather,
     ),
   );
   @override
@@ -87,13 +116,21 @@ class _AppShellState extends State<AppShell> {
         wardrobe: _store,
         outfits: _outfits,
         onAddClothes: _addItem,
-        onAddFragrance: () => _wardrobe(scents: true),
+        onAddFragrance: _addFragrance,
+        showFragranceInEmpty: _fragrances.items.isNotEmpty,
+        fragrance: TodayFragrance(
+          fragrances: _fragrances,
+          weather: _weather,
+          onAdd: _addFragrance,
+        ),
       ),
       WardrobeScreen(
         filter: _filter,
         store: _store,
         onAdd: _addItem,
         onFilterChanged: (value) => setState(() => _filter = value),
+        fragrances: _fragrances,
+        onAddFragrance: _addFragrance,
       ),
       const PlannerScreen(),
     ];
@@ -125,6 +162,27 @@ class _AppShellState extends State<AppShell> {
                             ),
                           ),
                         ),
+                        if (_index == 0 &&
+                            MediaQuery.textScalerOf(context).scale(16) <= 24)
+                          TextButton.icon(
+                            onPressed: () =>
+                                showLocationSheet(context, _weather),
+                            icon: AppSvg(
+                              'weather',
+                              color: c.primary,
+                              size: AppSize.iconMedium,
+                            ),
+                            label: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 100),
+                              child: Text(
+                                _weather.observation == null
+                                    ? 'City'
+                                    : '${_weather.observation!.temperatureC.round()}° ${_weather.location!.name}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
                         IconButton(
                           key: const Key('account-menu'),
                           tooltip: 'Account and appearance',
@@ -228,10 +286,12 @@ class _AccountSheet extends StatefulWidget {
     required this.user,
     required this.auth,
     required this.preferences,
+    required this.weather,
   });
   final AuthUser user;
   final AuthGateway auth;
   final AppPreferences preferences;
+  final WeatherStore weather;
   @override
   State<_AccountSheet> createState() => _AccountSheetState();
 }
@@ -291,6 +351,20 @@ class _AccountSheetState extends State<_AccountSheet> {
               ],
             ),
             Text(widget.user.email),
+            const SizedBox(height: AppSpace.lg),
+            ListenableBuilder(
+              listenable: widget.weather,
+              builder: (context, _) => OutlinedButton.icon(
+                onPressed: () => showLocationSheet(context, widget.weather),
+                icon: const AppSvg('weather'),
+                label: Text(
+                  widget.weather.location == null
+                      ? 'Choose weather city'
+                      : 'Weather city: ${widget.weather.location!.name}',
+                ),
+              ),
+            ),
+            const WeatherAttribution(),
             const SizedBox(height: AppSpace.xxl),
             Text('Appearance', style: Theme.of(context).textTheme.titleLarge),
             RadioGroup<ThemeMode>(

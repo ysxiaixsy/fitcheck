@@ -14,6 +14,7 @@ The SVGs in `icons/` and `illustrations/` were exported through the Figma MCP fr
 | `icons/outfit_badge_shuffle.svg`, `outfit_shuffle.svg`, `outfit_sparkles.svg` | Today, frame `115:44` |
 | `icons/outfit_check.svg` | Wear this action in Today and View outfit, frames `115:44` and `115:154` |
 | `icons/outfit_selected_check.svg` | Swap top selection, frame `115:92` |
+| `illustrations/scent.svg`, `icons/droplet.svg`, `icons/weather.svg` | Fragrance card, Change fragrance, and weather chip, frame `115:197` |
 
 Use the SVG geometry from Figma. Runtime theme colors are applied through semantic tokens; clothing photos remain user-supplied content. Design screenshots are references, not app background images.
 

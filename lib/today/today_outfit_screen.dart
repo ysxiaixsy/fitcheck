@@ -21,11 +21,15 @@ class TodayOutfitScreen extends StatefulWidget {
     required this.onAddClothes,
     required this.onAddFragrance,
     this.now,
+    this.fragrance,
+    this.showFragranceInEmpty = false,
   });
   final WardrobeStore wardrobe;
   final OutfitRepository outfits;
   final VoidCallback onAddClothes, onAddFragrance;
   final DateTime? now;
+  final Widget? fragrance;
+  final bool showFragranceInEmpty;
   @override
   State<TodayOutfitScreen> createState() => _TodayOutfitScreenState();
 }
@@ -358,6 +362,7 @@ class _TodayOutfitScreenState extends State<TodayOutfitScreen>
         readyCategories: ClothingCategory.values
             .where((value) => !selection.categories.contains(value))
             .toSet(),
+        fragrance: widget.showFragranceInEmpty ? widget.fragrance : null,
       );
     }
     final outfit = selection as OutfitSuggestion;
@@ -385,10 +390,13 @@ class _TodayOutfitScreenState extends State<TodayOutfitScreen>
             onViewOutfit: () => _view(outfit),
           ),
           const SizedBox(height: AppSpace.md),
-          TextButton(
-            onPressed: widget.onAddFragrance,
-            child: const Text('Add a fragrance (optional)'),
-          ),
+          if (widget.fragrance != null)
+            widget.fragrance!
+          else
+            TextButton(
+              onPressed: widget.onAddFragrance,
+              child: const Text('Add a fragrance (optional)'),
+            ),
         ],
       ),
     );

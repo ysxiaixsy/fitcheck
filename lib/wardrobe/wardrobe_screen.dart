@@ -6,6 +6,8 @@ import 'add_item_screen.dart';
 import 'wardrobe_models.dart';
 import 'wardrobe_repository.dart';
 import 'wardrobe_store.dart';
+import '../fragrance/fragrance_store.dart';
+import '../fragrance/fragrance_collection.dart';
 
 class WardrobeScreen extends StatefulWidget {
   const WardrobeScreen({
@@ -14,11 +16,15 @@ class WardrobeScreen extends StatefulWidget {
     required this.onFilterChanged,
     required this.store,
     required this.onAdd,
+    this.fragrances,
+    this.onAddFragrance,
   });
   final String filter;
   final ValueChanged<String> onFilterChanged;
   final WardrobeStore store;
   final VoidCallback onAdd;
+  final FragranceStore? fragrances;
+  final VoidCallback? onAddFragrance;
   @override
   State<WardrobeScreen> createState() => _WardrobeScreenState();
 }
@@ -89,7 +95,39 @@ class _WardrobeScreenState extends State<WardrobeScreen> {
             ),
             const SizedBox(height: AppSpace.sm),
             Expanded(
-              child: widget.store.loading
+              child: widget.filter == 'Scents' && widget.fragrances != null
+                  ? ListenableBuilder(
+                      listenable: widget.fragrances!,
+                      builder: (context, _) {
+                        final fragrances = widget.fragrances!;
+                        if (fragrances.loading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (fragrances.error != null) {
+                          return SingleChildScrollView(
+                            padding: const EdgeInsets.all(AppSpace.lg),
+                            child: Column(
+                              children: [
+                                InlineMessage(fragrances.error!, isError: true),
+                                TextButton(
+                                  onPressed: fragrances.retry,
+                                  child: const Text('Retry fragrances'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return FragranceCollection(
+                          items: fragrances.items,
+                          repository: fragrances.repository,
+                          query: _query,
+                          onAdd: widget.onAddFragrance ?? () {},
+                        );
+                      },
+                    )
+                  : widget.store.loading
                   ? const Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
                       padding: const EdgeInsets.fromLTRB(

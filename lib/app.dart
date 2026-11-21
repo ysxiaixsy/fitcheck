@@ -9,6 +9,8 @@ import 'shell/app_shell.dart';
 import 'theme/fitcheck_theme.dart';
 import 'wardrobe/wardrobe_repository.dart';
 import 'outfits/outfit_repository.dart';
+import 'fragrance/fragrance_repository.dart';
+import 'weather/weather_service.dart';
 
 class FitCheckApp extends StatefulWidget {
   const FitCheckApp({
@@ -17,11 +19,15 @@ class FitCheckApp extends StatefulWidget {
     required this.preferences,
     this.repositoryFactory,
     this.outfitRepositoryFactory,
+    this.fragranceRepositoryFactory,
+    this.weatherServiceFactory,
   });
   final AuthGateway auth;
   final AppPreferences preferences;
   final WardrobeRepository Function(String userId)? repositoryFactory;
   final OutfitRepository Function(String userId)? outfitRepositoryFactory;
+  final FragranceRepository Function(String userId)? fragranceRepositoryFactory;
+  final WeatherService Function()? weatherServiceFactory;
   @override
   State<FitCheckApp> createState() => _FitCheckAppState();
 }
@@ -126,6 +132,8 @@ class _FitCheckAppState extends State<FitCheckApp> {
               preferences: widget.preferences,
               repositoryFactory: widget.repositoryFactory,
               outfitRepositoryFactory: widget.outfitRepositoryFactory,
+              fragranceRepositoryFactory: widget.fragranceRepositoryFactory,
+              weatherServiceFactory: widget.weatherServiceFactory,
             ),
     ),
   );

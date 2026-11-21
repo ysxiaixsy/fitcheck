@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/fake_auth_gateway.dart';
+import 'support/memory_fragrance_repository.dart';
 import 'support/memory_wardrobe_repository.dart';
 import 'support/memory_outfit_repository.dart';
 
@@ -34,6 +35,11 @@ void main() {
         preferences: preferences,
         repositoryFactory: (_) => MemoryWardrobeRepository(),
         outfitRepositoryFactory: (_) => MemoryOutfitRepository(),
+        fragranceRepositoryFactory: (_) {
+          final repository = MemoryFragranceRepository();
+          addTearDown(repository.dispose);
+          return repository;
+        },
       ),
     );
     await tester.pumpAndSettle();

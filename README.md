@@ -50,7 +50,7 @@ npm run test:rules
 npm run test:web
 ```
 
-Playwright starts the test build at `http://127.0.0.1:5174`. Screenshots and failure traces are written under `artifacts/`. Browser tests cover account creation, validation, photo upload, wardrobe persistence, outfit swaps/details, persisted wear counts, theme switching, reset-password requests, and sign-in/sign-out. Rules tests check owner isolation, invalid wardrobe/outfit writes, photo restrictions, and immutable worn outfit records.
+Playwright starts the test build at `http://127.0.0.1:5174`. Screenshots and failure traces are written under `artifacts/`. Browser tests cover account creation, validation, photo upload, wardrobe persistence, outfit swaps/details, persisted wear counts, fragrance collection and weather-ranked daily choice, theme switching, reset-password requests, and sign-in/sign-out. Rules tests check owner isolation, invalid wardrobe/outfit/fragrance writes, photo restrictions, and immutable worn outfit records.
 
 CI runs these checks against a fresh `demo-fitcheck` emulator project, then builds the production web target separately:
 
