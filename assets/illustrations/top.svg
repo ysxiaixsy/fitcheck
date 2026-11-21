@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Illustration/Top" opacity="0.5">
+<path id="fill" d="M12.9375 3.9375L5.0625 7.3125L1.6875 14.625L7.3125 17.4375L9 14.625V32.0625H27V14.625L28.6875 17.4375L34.3125 14.625L30.9375 7.3125L23.0625 3.9375C22.2188 6.46875 20.25 7.875 18 7.875C15.75 7.875 13.7812 6.46875 12.9375 3.9375Z" fill="#2B3A67" stroke-width="0.84375" stroke-linejoin="round" stroke="black" stroke-opacity="0.22"/>
+<path id="detail" d="M12.9375 3.9375C13.7812 6.46875 15.75 7.875 18 7.875C20.25 7.875 22.2188 6.46875 23.0625 3.9375" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+<path id="detail_2" d="M18 7.875V12.9375" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+<path id="detail_3" d="M2.475 12.9375L8.2125 15.975" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+<path id="detail_4" d="M33.525 12.9375L27.7875 15.975" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+<path id="detail_5" d="M9 28.6875H27" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-opacity="0.25"/>
+</g>
+</svg>
